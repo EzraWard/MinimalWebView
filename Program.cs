@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Web.WebView2.Core;
 using Windows.Win32;
 using Windows.Win32.Foundation;
@@ -58,7 +59,7 @@ class Program
                     (char*)classId,
                     windowNamePtr,
                     WINDOW_STYLE.WS_OVERLAPPEDWINDOW,
-                    PInvoke.CW_USEDEFAULT, PInvoke.CW_USEDEFAULT, 600, 500,
+                    PInvoke.CW_USEDEFAULT, PInvoke.CW_USEDEFAULT, PInvoke.CW_USEDEFAULT, PInvoke.CW_USEDEFAULT,
                     new HWND(),
                     new HMENU(),
                     hInstance,
@@ -68,6 +69,8 @@ class Program
 
         if (hwnd.Value == 0)
             throw new Exception("hwnd not created");
+
+        SetWindowDark(hwnd);
 
         PInvoke.ShowWindow(hwnd, SHOW_WINDOW_CMD.SW_NORMAL);
 
@@ -122,11 +125,11 @@ class Program
 
             _controller.DefaultBackgroundColor = Color.Transparent; // avoids flash of white when page first renders
             _controller.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
-            _controller.CoreWebView2.SetVirtualHostNameToFolderMapping("minimalwebview.example", StaticFileDirectory, CoreWebView2HostResourceAccessKind.Allow);
+            //_controller.CoreWebView2.SetVirtualHostNameToFolderMapping("minimalwebview.example", StaticFileDirectory, CoreWebView2HostResourceAccessKind.Allow);
             PInvoke.GetClientRect(hwnd, out var hwndRect);
             _controller.Bounds = new Rectangle(0, 0, hwndRect.right, hwndRect.bottom);
             _controller.IsVisible = true;
-            _controller.CoreWebView2.Navigate("https://minimalwebview.example/index.html");
+            _controller.CoreWebView2.Navigate("http://10.80.2.61:8059");
 
             Console.WriteLine("WebView2 initialization succeeded.");
         }
@@ -174,4 +177,15 @@ class Program
         int y = unchecked((short)(xy >> 16));
         return y;
     }
+
+    private static unsafe void SetWindowDark(HWND hWnd)
+    {
+        var value = 1;
+        //value = 1 = true;
+        //20 is DWMWA_USE_IMMERSIVE_DARK_MODE
+        DwmSetWindowAttribute(hWnd, 20, ref value, sizeof(BOOL));
+    }
+
+    [DllImport("dwmapi.dll", PreserveSig = false)]
+    static extern void DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 }
