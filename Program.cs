@@ -29,7 +29,7 @@ class Program
             HINSTANCE hInstance = PInvoke.GetModuleHandle((char*)null);
             ushort classId;
 
-            HBRUSH backgroundBrush = PInvoke.CreateSolidBrush(0x271811); // this is actually #111827, Windows uses BBGGRR
+            HBRUSH backgroundBrush = PInvoke.CreateSolidBrush(0x2E2E2E); // this is actually #111827, Windows uses BBGGRR
             if (backgroundBrush.IsNull)
             {
                 // fallback to the system background color in case it fails
@@ -52,7 +52,7 @@ class Program
                     throw new Exception("class not registered");
             }
 
-            fixed (char* windowNamePtr = $"MinimalWebView {Assembly.GetExecutingAssembly().GetName().Version}")
+            fixed (char* windowNamePtr = "eRx Console"/*$"MinimalWebView {Assembly.GetExecutingAssembly().GetName().Version}"*/)
             {
                 hwnd = PInvoke.CreateWindowEx(
                     0,
