@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Web.WebView2.Core;
 using Windows.Win32;
 using Windows.Win32.Foundation;
+using Windows.Win32.Graphics.Dwm;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
 
@@ -70,7 +71,20 @@ class Program
         if (hwnd.Value == 0)
             throw new Exception("hwnd not created");
 
+        //    private static void SetTitleBarColor(HWND hwnd)
+        {
+            unsafe
+            {
+                const uint DWMWA_CAPTION_COLOR = 35;
+
+                // 0x002b36  RGB (solarized-base03)
+                WInterop.Gdi.Native.COLORREF colorRef = Color.FromArgb(0x00, 0x2b, 0x36);
+                HRESULT setBgResult = PInvoke.DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)DWMWA_CAPTION_COLOR, &colorRef, 4);
+                // TODO: check result, log warning on failure. Likely to fail before Windows 11 
+            }
+        }
         SetWindowDark(hwnd);
+        SetTitleBarColor(HWND hwnd)
 
         PInvoke.ShowWindow(hwnd, SHOW_WINDOW_CMD.SW_NORMAL);
 
@@ -184,6 +198,19 @@ class Program
         //value = 1 = true;
         //20 is DWMWA_USE_IMMERSIVE_DARK_MODE
         DwmSetWindowAttribute(hWnd, 20, ref value, sizeof(BOOL));
+    }
+
+    private static void SetTitleBarColor(HWND hwnd)
+    {
+        unsafe
+        {
+            const uint DWMWA_CAPTION_COLOR = 35;
+
+            // 0x002b36  RGB (solarized-base03)
+            WInterop.Gdi.Native.COLORREF colorRef = Color.FromArgb(0x00, 0x2b, 0x36);
+            HRESULT setBgResult = PInvoke.DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)DWMWA_CAPTION_COLOR, &colorRef, 4);
+            // TODO: check result, log warning on failure. Likely to fail before Windows 11 
+        }
     }
 
     [DllImport("dwmapi.dll", PreserveSig = false)]
