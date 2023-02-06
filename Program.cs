@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Web.WebView2.Core;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using Windows.Win32.Graphics.Dwm;
+//using Windows.Win32.Graphics.Dwm;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
 
@@ -71,20 +71,20 @@ class Program
         if (hwnd.Value == 0)
             throw new Exception("hwnd not created");
 
-        //    private static void SetTitleBarColor(HWND hwnd)
-        {
-            unsafe
-            {
-                const uint DWMWA_CAPTION_COLOR = 35;
+        ////private static void SetTitleBarColor(HWND hwnd)
+        //{
+        //    unsafe
+        //    {
+        //        const uint DWMWA_CAPTION_COLOR = 35;
 
-                // 0x002b36  RGB (solarized-base03)
-                WInterop.Gdi.Native.COLORREF colorRef = Color.FromArgb(0x00, 0x2b, 0x36);
-                HRESULT setBgResult = PInvoke.DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)DWMWA_CAPTION_COLOR, &colorRef, 4);
-                // TODO: check result, log warning on failure. Likely to fail before Windows 11 
-            }
-        }
+        //        // 0x002b36  RGB (solarized-base03)
+        //        WInterop.Gdi.Native.COLORREF colorRef = Color.FromArgb(0x00, 0x2b, 0x36);
+        //        HRESULT setBgResult = PInvoke.DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)DWMWA_CAPTION_COLOR, &colorRef, 4);
+        //        // TODO: check result, log warning on failure. Likely to fail before Windows 11 
+        //    }
+        //}
         SetWindowDark(hwnd);
-        SetTitleBarColor(HWND hwnd)
+        //SetTitleBarColor(hwnd);
 
         PInvoke.ShowWindow(hwnd, SHOW_WINDOW_CMD.SW_NORMAL);
 
@@ -143,7 +143,7 @@ class Program
             PInvoke.GetClientRect(hwnd, out var hwndRect);
             _controller.Bounds = new Rectangle(0, 0, hwndRect.right, hwndRect.bottom);
             _controller.IsVisible = true;
-            _controller.CoreWebView2.Navigate("http://10.80.2.61:8059");
+            _controller.CoreWebView2.Navigate("https://www.theverge.com");
 
             Console.WriteLine("WebView2 initialization succeeded.");
         }
@@ -200,18 +200,18 @@ class Program
         DwmSetWindowAttribute(hWnd, 20, ref value, sizeof(BOOL));
     }
 
-    private static void SetTitleBarColor(HWND hwnd)
-    {
-        unsafe
-        {
-            const uint DWMWA_CAPTION_COLOR = 35;
+    //private static void SetTitleBarColor(HWND hwnd)
+    //{
+    //    unsafe
+    //    {
+    //        const uint DWMWA_CAPTION_COLOR = 35;
 
-            // 0x002b36  RGB (solarized-base03)
-            WInterop.Gdi.Native.COLORREF colorRef = Color.FromArgb(0x00, 0x2b, 0x36);
-            HRESULT setBgResult = PInvoke.DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)DWMWA_CAPTION_COLOR, &colorRef, 4);
-            // TODO: check result, log warning on failure. Likely to fail before Windows 11 
-        }
-    }
+    //        // 0x002b36  RGB (solarized-base03)
+    //        WInterop.Gdi.Native.COLORREF colorRef = Color.FromArgb(0x00, 0x2b, 0x36);
+    //        HRESULT setBgResult = PInvoke.DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)DWMWA_CAPTION_COLOR, &colorRef, 4);
+    //        // TODO: check result, log warning on failure. Likely to fail before Windows 11 
+    //    }
+    //}
 
     [DllImport("dwmapi.dll", PreserveSig = false)]
     static extern void DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
